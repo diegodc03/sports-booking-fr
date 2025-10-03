@@ -1,0 +1,75 @@
+
+
+
+<section class="p-4">
+
+    <form
+      [formGroup]="formReservationRegister"
+      (ngSubmit)="onSubmit()"
+      class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4"
+    >
+
+    <mat-form-field class="w-full">
+      <mat-label>Ciudad</mat-label>
+      <mat-select formControlName="city">
+        @for (city of avaliableCitiesToReserve; track city.id) {
+          <mat-option [value]="city.id">
+            {{city.city_name}}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="w-full">
+      <mat-label>Deporte</mat-label>
+      <mat-select formControlName="typeSport">
+        @for (sport of typeOfSports; track sport.id) {
+          <mat-option [value]="sport.id">
+            {{sport.sport_name}}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field  class="w-full">
+      <mat-label>Pista</mat-label>
+      <mat-select formControlName="court">
+        @for (court of courtOfSport; track court) {
+          <mat-option [value]="court">
+            {{court}}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="w-full">
+      <mat-label>Fecha</mat-label >
+      <input matInput [matDatepicker]="datePicker" formControlName="date">
+      <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+      <mat-datepicker #datePicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field class="w-full">
+      <mat-label>Pick a time</mat-label>
+      <input matInput [matTimepicker]="picker" formControlName="dateTime">
+      <mat-timepicker-toggle matIconSuffix [for]="picker"/>
+      <mat-timepicker #picker/>
+    </mat-form-field>
+
+    <div >
+      <button
+        mat-flat-button
+        color="accent"
+        type="submit"
+        class="w-full h-[56px] "
+      >
+        Comprobar Reserva
+      </button>
+    </div>
+  </form>
+
+
+  
+
+  <app-accordion-courts-show [date]="selectedDate()"></app-accordion-courts-show>
+</section>

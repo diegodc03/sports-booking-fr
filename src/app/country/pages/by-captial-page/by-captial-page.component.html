@@ -1,0 +1,15 @@
+
+
+<app-country-search-input
+  placeholder="Buscar Por Capital de mi pais"
+  (searchValue)="onSearch($event)"
+  [debounceTime]="1000"
+/>
+
+
+@if (isError() != null) {
+  <p class="m-2">{{this.isError()}}</p>
+} @else {
+  <app-country-list [countries]="countries()"></app-country-list>
+}
+

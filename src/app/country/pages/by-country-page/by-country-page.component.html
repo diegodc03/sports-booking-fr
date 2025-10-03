@@ -1,0 +1,14 @@
+
+
+<app-country-search-input placeholder="Buscar Por Nombre de Pais"
+  (searchValue)="onSearch($event)"></app-country-search-input>
+
+
+  <app-country-list
+    [countries]="countries()"
+    [errorMessage] = "isError() "
+    [isEmpty] = "countries().values.length == 0"
+    [isLoading]="isLoading()"
+  />
+
+

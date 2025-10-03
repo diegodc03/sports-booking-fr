@@ -1,0 +1,16 @@
+ 
+<section class="flex flex-col gap-4 my-4">
+
+    <mat-accordion>
+        <mat-expansion-panel (opened)="panelOpenState.set(true)" (closed)="panelOpenState.set(false)">
+            <mat-expansion-panel-header>
+            <mat-panel-title> Self aware panel </mat-panel-title>
+            <mat-panel-description>
+                Currently I am {{panelOpenState() ? 'open' : 'closed'}}
+            </mat-panel-description>
+            </mat-expansion-panel-header>
+            <app-booking-date-table [date]="date"></app-booking-date-table>
+        </mat-expansion-panel>
+    </mat-accordion>
+
+</section>

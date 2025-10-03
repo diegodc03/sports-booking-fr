@@ -1,0 +1,59 @@
+
+
+<section>  
+  <div class="my-4">
+    <form [formGroup]="formReservationRegister" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <!-- Fecha -->
+      <mat-form-field>
+          <mat-label>Fecha</mat-label>
+          <input matInput [matDatepicker]="datePicker" formControlName="date">
+          <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+          <mat-datepicker #datePicker></mat-datepicker>
+      </mat-form-field>
+
+      <!-- Ciudad -->
+      <mat-form-field>
+        <mat-label>Zone To Reserve</mat-label>
+        <mat-select>
+          <mat-option>None</mat-option>
+          @for (state of states; track state.id) {
+            <mat-option [value]="state.id">{{state.city_name}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Deporte -->
+      <mat-form-field>
+        <mat-label>Deporte</mat-label>
+        <mat-select formControlName="typeSport">
+          @for (sport of typeOfSports; track sport.id) {
+            <mat-option [value]="sport.id">
+              {{sport.sport_name}}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Pista -->
+      <mat-form-field>
+        <mat-label>Pista</mat-label>
+        <mat-select formControlName="court">
+          @for (court of courtOfSport; track court) {
+            <mat-option [value]="court">
+              {{court}}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </form>
+  </div>
+  
+  <section>
+    <div class="example-button-row">
+      <button matButton="filled">Buscar</button>
+    </div>
+    </section>
+  <app-booking-date-table [date]="selectedDate()"/>
+
+</section>

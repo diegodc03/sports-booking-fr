@@ -25,6 +25,8 @@
               }
             ],
             "styles": [
+              "node_modules/angular-calendar/css/angular-calendar.css",
+              "src/custom-theme.scss",
               "src/styles.css"
             ]
           },
@@ -82,11 +84,15 @@
               }
             ],
             "styles": [
+              "node_modules/angular-calendar/css/angular-calendar.css",
               "src/styles.css"
             ]
           }
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "fb9f87b3-f4ea-48b8-bf1d-a88bcc852027"
   }
 }
