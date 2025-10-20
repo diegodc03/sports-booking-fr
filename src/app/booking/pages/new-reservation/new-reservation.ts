@@ -8,6 +8,7 @@ import {
   FormsModule,
   ReactiveFormsModule,  
   FormBuilder,
+  FormGroup,
 } from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {MatInputModule} from '@angular/material/input';
@@ -15,7 +16,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatDatepickerModule } from '@angular/material/datepicker';
 import {MatTimepickerModule} from '@angular/material/timepicker';
 import { MatSelectModule } from "@angular/material/select";
-import { City } from '../../interfaces/City.interface';
+import { CityDTO } from '../../interfaces/CityDTO.interface';
 import { Sport } from '../../interfaces/Sport.interface';
 import {MatIconModule} from '@angular/material/icon';
 import {MatDividerModule} from '@angular/material/divider';
@@ -23,6 +24,7 @@ import {MatButtonModule} from '@angular/material/button';
 import { BookingDateTableComponent } from "../../components/booking-date-table/booking-date-table.component";
 import { AccordionCourtsShow } from "../../components/accordion-courts-show/accordion-courts-show";
 import { GenericButtonComponent } from "@shared/components/generic-button/generic-button.component";
+import { BookingService } from '../../services/booking.service';
 
 
 
@@ -48,21 +50,24 @@ export class NewReservation {
   @Output() selectedDate = signal<Date | null>(null);
 
   fb = inject(FormBuilder);
+  bookingService = inject(BookingService);
 
-  formReservationRegister = this.fb.group({
-    date: [null, [Validators.required]], // Fecha requerida
-    dateTime: [null, [Validators.required]], // Hora requerida
-    city: [null, [Validators.required]], // Ciudad requerida
-    typeSport: [null, [Validators.required]], // Deporte requerido
-    court: [null, [Validators.required]], // Pista requerida
-  });
+
+  formReservationRegister = signal<FormGroup>( 
+    this.fb.group({
+      date: [null, [Validators.required]], // Fecha requerida
+      dateTime: [null, [Validators.required]], // Hora requerida
+      CityDTO: [null, [Validators.required]], // Ciudad requerida
+      typeSport: [null, [Validators.required]], // Deporte requerido
+      court: [null, [Validators.required]], // Pista requerida
+  }));
   
-  avaliableCitiesToReserve: City[] = [
-    { id: 1, city_name: 'Madrid' },
-    { id: 2, city_name: 'Zamora' },
-    { id: 3, city_name: 'Fresno De La Ribera' },
-    { id: 4, city_name: 'Sevilla' },
-    { id: 5, city_name: 'Zaragoza' },
+  avaliableCitiesToReserve: CityDTO[] = [
+    { cityId: 1, cityName: 'Madrid' },
+    { cityId: 2, cityName: 'Zamora' },
+    { cityId: 3, cityName: 'Fresno De La Ribera' },
+    { cityId: 4, cityName: 'Sevilla' },
+    { cityId: 5, cityName: 'Zaragoza' },
   ];
 
   typeOfSports: Sport[] = [
@@ -76,15 +81,24 @@ export class NewReservation {
 
 
   onSubmit() {
-    if (this.formReservationRegister.valid) {
-      const selectedDateFromForm = this.formReservationRegister.get('date')?.value || null;
-      this.selectedDate.set(selectedDateFromForm); // ✅ asignamos la fecha aquí
+    if (this.formReservationRegister().valid) {
+      const selectedDateFromForm = this.formReservationRegister().get('date')?.value || null;
+      this.selectedDate.set(selectedDateFromForm);
 
-      console.log('Datos enviados:', this.formReservationRegister.value);
+      this.bookingService.createReservation(this.formReservationRegister().value).subscribe({
+        next: response => {
+          console.log('Reserva creada:', response);
+        },
+        error: err => {
+          console.error('Error al crear la reserva:', err);
+        }
+      });
+
+      console.log('Datos enviados:', this.formReservationRegister().value);
       console.log('Fecha seleccionada:', this.selectedDate());
     } else {
       console.log('Formulario inválido');
-      this.formReservationRegister.markAllAsTouched();
+      this.formReservationRegister().markAllAsTouched();
     }
   }
 }

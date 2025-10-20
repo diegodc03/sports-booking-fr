@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import {  UserDto } from '@auth/interfaces/userDto.interface';
 import { AuthService } from '@auth/services/auth.service';
 import { FormUtils } from 'src/app/utils/form-utils';
 
@@ -24,6 +25,7 @@ export class RegisterPageComponent {
     name: ['', Validators.required],
     surname: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
+    telephone: ['', [Validators.required, Validators.pattern('[0-9]{9}'), Validators.maxLength(9)]],
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
@@ -35,10 +37,15 @@ export class RegisterPageComponent {
       }, 2000);
       return;
     }
-
-    const { name= '', surname= '', email = '', password = '' } = this.registerForm.value;
-
-    this.authService.register(name!, surname!, email!, password!).subscribe((isAuthenticated) => {
+    console.log(this.registerForm.value);
+    const newUser: UserDto = {
+      firstname: this.registerForm.value.name!,
+      lastname: this.registerForm.value.surname!,
+      email: this.registerForm.value.email!,
+      telephone: this.registerForm.value.telephone!,
+      password: this.registerForm.value.password!,
+    };
+    this.authService.register(newUser).subscribe((isAuthenticated) => {
       if (isAuthenticated) {
         this.router.navigateByUrl('/');
         return;

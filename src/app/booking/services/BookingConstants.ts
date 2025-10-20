@@ -8,5 +8,6 @@ export class BookingConstants {
     static GET_ALL_BOOKINGS = `${BookingConstants.BOOKING_ENDPOINT}/reservations`;
     static GET_BOOKINGS_BY_DATE = `${BookingConstants.BOOKING_ENDPOINT}/reservationsByDate`;
 
+    static CREATE_RESERVATION = `${BookingConstants.BOOKING_ENDPOINT}/createReservation`;
 
 }

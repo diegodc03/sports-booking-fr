@@ -1,4 +1,4 @@
-import { User } from "@auth/interfaces/user.interface";
+import { UserDto } from "@auth/interfaces/userDto.interface";
 import { Facility } from "./Facility.interface";
 import { GuestUser } from "./QuestUser";
 
@@ -6,7 +6,7 @@ import { GuestUser } from "./QuestUser";
 export interface Reservation {
   id: number;
   facility: Facility;  // Referencia a la instalación
-  user: User;          // Referencia al usuario
+  user: UserDto;          // Referencia al usuario
   guest_users?: GuestUser[];
   date: string;
   hour: string;

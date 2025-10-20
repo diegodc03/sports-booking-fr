@@ -5,16 +5,16 @@ import { catchError, map, Observable, of, tap } from 'rxjs';
 import { rxResource } from '@angular/core/rxjs-interop';
 
 import { AuthResponse } from '@auth/interfaces/auth-response.interface';
-import { User } from '@auth/interfaces/user.interface';
+import { UserDto } from '@auth/interfaces/userDto.interface';
 
 type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
-const baseUrl = environment.baseUrl;
+const baseUrl = "http://localhost:8082/api/v1"; //environment.baseUrl;
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
   private _authStatus = signal<AuthStatus>('checking');
-  private _user = signal<User | null>(null);
+  private _user = signal<UserDto | null>(null);
   private _token = signal<string | null>(localStorage.getItem('token'));
 
   private http = inject(HttpClient);
@@ -48,8 +48,13 @@ export class AuthService {
       );
   }
 
-  register(arg0: string, arg1: string, arg2: string, arg3: string): Observable<boolean> {
-    throw new Error('Method not implemented.');
+  register(user: UserDto): Observable<boolean> {
+    return this.http
+      .post<AuthResponse>(`${baseUrl}/auth/register`, user)
+      .pipe(
+        map((resp) => this.handleAuthSuccess(resp)),
+        catchError((error: any) => this.handleAuthError(error))
+      );
   }
 
   checkStatus(): Observable<boolean> {
@@ -93,4 +98,9 @@ export class AuthService {
     this.logout();
     return of(false);
   }
+
+  getToken(): string | null {
+    return this._token() || localStorage.getItem('token');
+  }
+
 }

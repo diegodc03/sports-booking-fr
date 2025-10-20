@@ -1,9 +1,9 @@
-import { User } from "@auth/interfaces/user.interface";
+import { UserDto } from "@auth/interfaces/userDto.interface";
 
 export interface GuestUser {
   id: number;
   username: string;
   surname: string;
   telephone: string;
-  user: User;       // Referencia al usuario
+  user: UserDto;       // Referencia al usuario
 }

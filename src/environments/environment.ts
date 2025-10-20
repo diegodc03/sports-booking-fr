@@ -1,7 +1,7 @@
 
 
 export const environment = {
-  baseUrl: 'http://localhost:3000/api',
+  baseUrl: 'http://localhost:8082/api/v1',
   booking: '/booking',
   results: '/results',
   adminPanel: '/adminPanel',

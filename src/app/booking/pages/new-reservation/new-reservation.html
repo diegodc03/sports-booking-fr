@@ -4,17 +4,17 @@
 <section class="p-4">
 
     <form
-      [formGroup]="formReservationRegister"
+      [formGroup]="formReservationRegister()"
       (ngSubmit)="onSubmit()"
       class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4"
     >
 
     <mat-form-field class="w-full">
       <mat-label>Ciudad</mat-label>
-      <mat-select formControlName="city">
-        @for (city of avaliableCitiesToReserve; track city.id) {
-          <mat-option [value]="city.id">
-            {{city.city_name}}
+      <mat-select formControlName="CityDTO">
+        @for (CityDTO of avaliableCitiesToReserve; track CityDTO.cityId) {
+          <mat-option [value]="CityDTO.cityId">
+            {{CityDTO.cityName}}
           </mat-option>
         }
       </mat-select>
@@ -71,5 +71,5 @@
 
   
 
-  <app-accordion-courts-show [date]="selectedDate()"></app-accordion-courts-show>
+  <!--<app-accordion-courts-show [date]="selectedDate()"></app-accordion-courts-show>-->
 </section>

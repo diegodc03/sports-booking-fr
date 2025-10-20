@@ -2,8 +2,7 @@
 
 <section>  
   <div class="my-4">
-    <form [formGroup]="formReservationRegister" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-
+    <form [formGroup]="formReservationRegister()" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <!-- Fecha -->
       <mat-form-field>
           <mat-label>Fecha</mat-label>
@@ -17,8 +16,8 @@
         <mat-label>Zone To Reserve</mat-label>
         <mat-select>
           <mat-option>None</mat-option>
-          @for (state of states; track state.id) {
-            <mat-option [value]="state.id">{{state.city_name}}</mat-option>
+          @for (state of this.citiesResource.value(); track state.cityId) {
+            <mat-option [value]="state.cityId">{{state.cityName}}</mat-option>
           }
         </mat-select>
       </mat-form-field>
@@ -27,7 +26,7 @@
       <mat-form-field>
         <mat-label>Deporte</mat-label>
         <mat-select formControlName="typeSport">
-          @for (sport of typeOfSports; track sport.id) {
+          @for (sport of sportsResource.value(); track sport.id) {
             <mat-option [value]="sport.id">
               {{sport.sport_name}}
             </mat-option>
@@ -54,6 +53,6 @@
       <button matButton="filled">Buscar</button>
     </div>
     </section>
-  <app-booking-date-table [date]="selectedDate()"/>
-
+  <!--<app-booking-date-table [date]="selectedDate()"/>-->
+    
 </section>

@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
 })
 export class AccordionCourtsShow {
 
-  @Input({required:true}) date!: Date | null;
+  //@Input({required:true}) date!: Date | null;
   
   selectedDate = signal<Date | null>(null);
   readonly panelOpenState = signal(false);
