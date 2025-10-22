@@ -14,13 +14,14 @@
       <!-- Ciudad -->
       <mat-form-field>
         <mat-label>Zone To Reserve</mat-label>
-        <mat-select>
-          <mat-option>None</mat-option>
+        <mat-select formControlName="CityDTO">
+          <mat-option [value]="null">None</mat-option>
           @for (state of this.citiesResource.value(); track state.cityId) {
-            <mat-option [value]="state.cityId">{{state.cityName}}</mat-option>
+            <mat-option [value]="state">{{ state.cityName }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
+
 
       <!-- Deporte -->
       <mat-form-field>
@@ -28,7 +29,7 @@
         <mat-select formControlName="typeSport">
           @for (sport of sportsResource.value(); track sport.id) {
             <mat-option [value]="sport.id">
-              {{sport.sport_name}}
+              {{sport.sportName}}
             </mat-option>
           }
         </mat-select>

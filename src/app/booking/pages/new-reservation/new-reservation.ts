@@ -71,10 +71,10 @@ export class NewReservation {
   ];
 
   typeOfSports: Sport[] = [
-    { id: 1, sport_name: 'Fútbol', max_players: 11 },
-    { id: 2, sport_name: 'Baloncesto', max_players: 5 },
-    { id: 3, sport_name: 'Tenis', max_players: 2 },
-    { id: 4, sport_name: 'Padel', max_players: 4 },
+    { id: 1, sportName: 'Fútbol', maxPlayers: 11 },
+    { id: 2, sportName: 'Baloncesto', maxPlayers: 5 },
+    { id: 3, sportName: 'Tenis', maxPlayers: 2 },
+    { id: 4, sportName: 'Padel', maxPlayers: 4 },
   ];
 
   courtOfSport: string[] = ['Pista 1', 'Pista 2', 'Pista 3', 'Pista 4', 'Pista 5'];

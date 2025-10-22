@@ -25,7 +25,7 @@
       <mat-select formControlName="typeSport">
         @for (sport of typeOfSports; track sport.id) {
           <mat-option [value]="sport.id">
-            {{sport.sport_name}}
+            {{sport.sportName}}
           </mat-option>
         }
       </mat-select>

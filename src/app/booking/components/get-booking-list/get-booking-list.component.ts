@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { BookingDateTableComponent } from "../booking-date-table/booking-date-table.component";
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatInputModule} from '@angular/material/input';
@@ -31,9 +31,9 @@ export class GetBookingListComponent {
   bookingService = inject(BookingService);
   router = inject(Router);
   activatedRoute = inject(ActivatedRoute);
-  selectedDate = signal<Date | null>(null);
-
   fb = inject(FormBuilder);
+
+  selectedDate = signal<Date | null>(null);
 
   formReservationRegister = signal<FormGroup>(
     this.fb.group({
@@ -46,56 +46,98 @@ export class GetBookingListComponent {
   );
 
   cityIdSignal = toSignal(
-  this.formReservationRegister().get('CityDTO')!.valueChanges.pipe(
-    map((city: CityDTO | null) => city?.cityId ?? null)
-  ),
-  { initialValue: null }
-);
+    this.formReservationRegister().get('CityDTO')!.valueChanges.pipe(
+      map((city: CityDTO | null) => city?.cityId ?? null)
+    ),
+    { initialValue: null }
+  );
 
+  sportIdSignal = toSignal(
+    this.formReservationRegister().get('typeSport')!.valueChanges.pipe(
+      map((sport: Sport | null) => sport?.id ?? null)
+    ),
+    { initialValue: null }
+  );
 
-
-  courtOfSport: string[] = ['Pista 1', 'Pista 2', 'Pista 3', 'Pista 4', 'Pista 5'];
-  
-  // Signal derivado con el valor del filtro
   filterSignal = computed(() => this.formReservationRegister().value as BookingFilter);
 
+  
+  courtOfSport: string[] = ['Pista 1', 'Pista 2', 'Pista 3', 'Pista 4', 'Pista 5'];
+  
 
   citiesResource = rxResource<CityDTO[], void>({
     stream: () => this.bookingService.loadAllCities(),
     defaultValue: [],
   });
 
-  // 🔹 Deportes por ciudad seleccionada
   sportsResource = rxResource<Sport[], number | null>({
-  params: this.cityIdSignal,
-  stream: ({ params: cityId }) => {
-    if (!cityId) return of([]); // Si no hay ciudad seleccionada, devolvemos vacío
-    return this.bookingService.loadAllSportsByCity(cityId).pipe(
-      catchError(err => {
-        console.error('Error cargando deportes:', err);
-        return of([]);
-      })
-    );
-  },
-  defaultValue: [],
-});
+    params: this.cityIdSignal,
+    stream: ({ params: cityId }) => {
+      console.log('🏙️ Ciudad seleccionada ID:', cityId);
+      const id = cityId == null ? null : Number(cityId);
+      if (id == null) return of([]);
+      return this.bookingService.loadAllSportsByCity(id).pipe(
+        catchError(err => {
+          console.error('Error cargando deportes:', err);
+          return of([]);
+        })
+      );
+    },
+    defaultValue: [],
+  });
 
+  fieldOfSelectedSport = rxResource<Sport | null, number | null>({
+    params: this.sportIdSignal,
+    stream: ({ params: sportId }) => {
+      console.log('🏙️ Ciudad seleccionada ID:', sportId);
+      const id = sportId == null ? null : Number(sportId);
+      if (id == null) return of(null);
+      return this.bookingService.loadAllSportsByCity(this.cityIdSignal()!).pipe(
+        map(sports => sports.find(sport => sport.id === id) || null),
+        catchError(err => {
+          console.error('Error cargando deporte seleccionado:', err);
+          return of(null);
+        })
+      );
+    },
+    defaultValue: null,
+  });
 
-  // Recurso reactivo
   reservationsResource = rxResource<Reservation[], BookingFilter>({
-      params: this.filterSignal,
-      stream: ({ params }) => {
-        const filter = params;
-        const noFilter =
-          !filter.date && !filter.CityDTO && !filter.typeSport && !filter.court;
+    params: this.filterSignal,
+    stream: ({ params }) => {
+      const filter = params;
+      const noFilter =
+        !filter.date && !filter.CityDTO && !filter.typeSport && !filter.court;
 
-        return noFilter
-          ? this.bookingService.loadAllBookings()
-          : this.bookingService.searchWithFilter(filter);
-      },
-      defaultValue: [], // valor por defecto
+      return noFilter
+        ? this.bookingService.loadAllBookings()
+        : this.bookingService.searchWithFilter(filter);
+    },
+    defaultValue: [],
+  });
+
+  // 🔹 Efecto para limpiar deporte al cambiar de ciudad
+  constructor() {
+    effect(() => {
+      const cityId = this.cityIdSignal();
+      if (cityId !== null) {
+        console.log('🧹 Ciudad cambió, limpiando deporte seleccionado...');
+        this.formReservationRegister().patchValue({ typeSport: null });
+      }
     });
 
+    effect(() => {
+    console.log('🟢 cityIdSignal cambió a:', this.cityIdSignal());
+  });
+  }
+
+  // 🔹 Método auxiliar para enviar o refrescar reservas manualmente (opcional)
+  onSearch() {
+    console.log('🔎 Filtro actual:', this.filterSignal());
+    // El recurso `reservationsResource` se actualiza solo con el filtro reactivo,
+    // pero este método puede servir si agregas lógica extra.
+  }
 
 }
 

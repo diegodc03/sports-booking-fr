@@ -58,6 +58,12 @@ export class BookingService {
     });
   }
 
+  loadAllCourtsBySport(sportId: number): Observable<string[]> {
+    return this.http.get<string[]>(`${this.baseUrl}/courts`, {
+      params: { sportId: sportId.toString() }
+    });
+  }
+
   /*
   loadAllCourts(): Observable<Court[]> {
     return this.http.get<Court[]>(`${this.baseUrl}/courts`);
