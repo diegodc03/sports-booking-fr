@@ -6,67 +6,67 @@ import { HttpClient } from '@angular/common/http';
 import { BookingFilter } from '../interfaces/BookingFilter';
 import { CityDTO } from '../interfaces/CityDTO.interface';
 import { Sport } from '../interfaces/Sport.interface';
+import { Facility } from '../interfaces/Facility.interface';
+import { BookingDao } from '../dao/booking-dao';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BookingService {
-  private baseUrl = 'http://localhost:8082/api/v1/booking'; // Replace with your actual base URL
-  private http = inject(HttpClient);
   allBookings = signal<Reservation[]>([]);
   filteredBookings = signal<Reservation[]>([]);
 
-  constructor() {
-    this.loadAllBookings();
+  private citiesCache: CityDTO[] | null = null;
+  private sportsCache = new Map<number, Sport[]>(); // cityId -> Sports
+  private facilitiesCache = new Map<string, Facility[]>(); // "cityId-sportId" -> Facilities
+
+  constructor(private dao: BookingDao) {
+    this.loadAllReservations().subscribe(reservations => this.allBookings.set(reservations));
+    console.log('BookingService initialized, loaded reservations.');
+    console.log('Initial reservations:', this.allBookings());
   }
 
-
-  private queryCacheDatePicker = new Map<Date | null, Reservation[]>();
-
-  /*
-  loadAllBookings(): void {
-    this.http.get<Reservation[]>(BookingConstants.GET_ALL_BOOKINGS).subscribe((bookings) => {
-      this.allBookings.set(bookings);
-    });
-  }*/
-
-  loadAllBookings(): Observable<Reservation[]> {
-    return this.http.get<Reservation[]>(BookingConstants.GET_ALL_BOOKINGS);
+  // 🔹 Reservas
+  loadAllReservations(): Observable<Reservation[]> {
+    return this.dao.getAllReservations();
   }
 
   searchWithFilter(filter: BookingFilter): Observable<Reservation[]> {
-    return this.http.post<Reservation[]>(BookingConstants.GET_BOOKINGS_BY_DATE, filter);
-  }
-
-  createReservation(reservationData: any): Observable<Reservation> {
-    return this.http.post<Reservation>(BookingConstants.CREATE_RESERVATION, reservationData).pipe(
-      tap((newReservation) => {
-        // Actualiza la señal allBookings con la nueva reserva
-        this.allBookings.set([...this.allBookings(), newReservation]);
-      })
+    return this.dao.getBookingsByFilter(filter).pipe(
+      tap(res => this.filteredBookings.set(res))
     );
   }
 
+  createReservation(reservationData: any): Observable<Reservation> {
+    return this.dao.createReservation(reservationData).pipe(
+      tap(newRes => this.allBookings.set([...this.allBookings(), newRes]))
+    );
+  }
+
+  // 🔹 Ciudades con cache
   loadAllCities(): Observable<CityDTO[]> {
-    return this.http.get<CityDTO[]>(`${this.baseUrl}/cities`);
+    if (this.citiesCache) return of(this.citiesCache);
+    return this.dao.getAllCities().pipe(
+      tap(cities => this.citiesCache = cities)
+    );
   }
 
+  // 🔹 Deportes por ciudad con cache
   loadAllSportsByCity(cityId: number): Observable<Sport[]> {
-    console.log('Cargando deportes para la ciudad con ID:', cityId);
-    return this.http.get<Sport[]>(`${this.baseUrl}/sports`, {
-      params: { cityId: cityId.toString() }
-    });
+    if (this.sportsCache.has(cityId)) return of(this.sportsCache.get(cityId)!);
+    return this.dao.getSportsByCity(cityId).pipe(
+      tap(sports => this.sportsCache.set(cityId, sports))
+    );
   }
 
-  loadAllCourtsBySport(sportId: number): Observable<string[]> {
-    return this.http.get<string[]>(`${this.baseUrl}/courts`, {
-      params: { sportId: sportId.toString() }
-    });
+  // 🔹 Pistas por ciudad y deporte con cache
+  loadAllCourtsBySport(cityId: number, sportId: number): Observable<Facility[]> {
+    const key = `${cityId}-${sportId}`;
+    if (this.facilitiesCache.has(key)) return of(this.facilitiesCache.get(key)!);
+    return this.dao.getFacilities(cityId, sportId).pipe(
+      tap(facilities => this.facilitiesCache.set(key, facilities))
+    );
   }
 
-  /*
-  loadAllCourts(): Observable<Court[]> {
-    return this.http.get<Court[]>(`${this.baseUrl}/courts`);
-  }*/
 
 }

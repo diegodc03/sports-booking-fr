@@ -1,4 +1,4 @@
-import {Component, inject, Output, signal} from '@angular/core';
+import {Component, computed, effect, inject, Output, signal} from '@angular/core';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import {
   FormControl,
@@ -25,6 +25,11 @@ import { BookingDateTableComponent } from "../../components/booking-date-table/b
 import { AccordionCourtsShow } from "../../components/accordion-courts-show/accordion-courts-show";
 import { GenericButtonComponent } from "@shared/components/generic-button/generic-button.component";
 import { BookingService } from '../../services/booking.service';
+import { rxResource, toSignal } from '@angular/core/rxjs-interop';
+import { Facility } from '../../interfaces/Facility.interface';
+import { map, of } from 'rxjs';
+import { BookingFilter } from '../../interfaces/BookingFilter';
+import { CreateReservation } from '../../interfaces/CreateResertion';
 
 
 
@@ -52,7 +57,6 @@ export class NewReservation {
   fb = inject(FormBuilder);
   bookingService = inject(BookingService);
 
-
   formReservationRegister = signal<FormGroup>( 
     this.fb.group({
       date: [null, [Validators.required]], // Fecha requerida
@@ -71,34 +75,128 @@ export class NewReservation {
   ];
 
   typeOfSports: Sport[] = [
-    { id: 1, sportName: 'Fútbol', maxPlayers: 11 },
-    { id: 2, sportName: 'Baloncesto', maxPlayers: 5 },
-    { id: 3, sportName: 'Tenis', maxPlayers: 2 },
-    { id: 4, sportName: 'Padel', maxPlayers: 4 },
+    { sportId: 1, sportName: 'Fútbol', maxPlayers: 11 },
+    { sportId: 2, sportName: 'Baloncesto', maxPlayers: 5 },
+    { sportId: 3, sportName: 'Tenis', maxPlayers: 2 },
+    { sportId: 4, sportName: 'Padel', maxPlayers: 4 },
   ];
 
   courtOfSport: string[] = ['Pista 1', 'Pista 2', 'Pista 3', 'Pista 4', 'Pista 5'];
 
 
+  
+  filterSignal = computed(() => this.formReservationRegister().value as BookingFilter);
+
+  cityIdSignal = toSignal(
+    this.formReservationRegister().get('CityDTO')!.valueChanges.pipe(
+      map((city: CityDTO | null) => city?.cityId ?? null)
+    ),
+    { initialValue: null }
+  );
+
+  sportIdSignal = toSignal(
+    this.formReservationRegister().get('typeSport')!.valueChanges.pipe(
+      map((sport: Sport | null) => sport?.sportId ?? null)
+    ),
+    { initialValue: null }
+  );
+
+  sportAndCitySignal = computed(() => {
+    const sportId = this.sportIdSignal();
+    const cityId = this.cityIdSignal();
+    return sportId != null && cityId != null ? { sportId, cityId } : null;
+  });
+  
+  citiesResource = rxResource<CityDTO[], void>({
+    stream: () => this.bookingService.loadAllCities(),
+    defaultValue: [],
+  });
+
+  sportsResource = rxResource<Sport[], number | null>({
+    params: this.cityIdSignal,
+    stream: ({ params: cityId }) => {
+      if (!cityId) return of([]);
+      return this.bookingService.loadAllSportsByCity(cityId);
+    },
+    defaultValue: [],
+  });
+
+
+  fieldOfSelectedSport = rxResource<Facility[], { sportId: number; cityId: number } | null>({
+    params: this.sportAndCitySignal,
+    stream: ({ params }) => {
+      if (!params) return of([]);
+      return this.bookingService.loadAllCourtsBySport(params.cityId, params.sportId);
+    },
+    defaultValue: [],
+  });
+
+
+  // 🔹 Efecto para limpiar deporte al cambiar de ciudad
+  constructor() {
+    effect(() => {
+      const cityId = this.cityIdSignal();
+      if (cityId !== null) {
+        console.log('🧹 Ciudad cambió, limpiando deporte seleccionado...');
+        this.formReservationRegister().patchValue({ typeSport: null });
+      }
+    });
+
+    effect(() => {
+    console.log('🟢 cityIdSignal cambió a:', this.cityIdSignal());
+  });
+  }
+
+  // 🔹 Método auxiliar para enviar o refrescar reservas manualmente (opcional)
+  onSearch() {
+    console.log('🔎 Filtro actual:', this.filterSignal());
+    // El recurso `reservationsResource` se actualiza solo con el filtro reactivo,
+    // pero este método puede servir si agregas lógica extra.
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   onSubmit() {
     if (this.formReservationRegister().valid) {
-      const selectedDateFromForm = this.formReservationRegister().get('date')?.value || null;
-      this.selectedDate.set(selectedDateFromForm);
+      const formValue = this.formReservationRegister().value;
+      
+      const dateObj = new Date(formValue.date);
+      const timeObj = new Date(formValue.dateTime);
+      // Extraemos solo lo que necesitamos para crear la reserva
+      const dto = {
+        facilityId: formValue.court.facilityId,
+        date: dateObj.toISOString().split('T')[0],         // "2025-10-26"
+        hour: timeObj.toISOString().split('T')[1].slice(0, 8) // "23:00:00"
+    };
 
-      this.bookingService.createReservation(this.formReservationRegister().value).subscribe({
-        next: response => {
+      // Llamada al service
+      this.bookingService.createReservation(dto).subscribe({
+        next: (response) => {
           console.log('Reserva creada:', response);
         },
-        error: err => {
+        error: (err) => {
           console.error('Error al crear la reserva:', err);
         }
       });
 
-      console.log('Datos enviados:', this.formReservationRegister().value);
-      console.log('Fecha seleccionada:', this.selectedDate());
     } else {
       console.log('Formulario inválido');
       this.formReservationRegister().markAllAsTouched();
     }
   }
+
 }

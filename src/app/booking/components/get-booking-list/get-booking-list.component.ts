@@ -16,6 +16,7 @@ import { Reservation } from '../../interfaces/Reservation';
 import { BookingFilter } from '../../interfaces/BookingFilter';
 import { catchError, map, of } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { Facility } from '../../interfaces/Facility.interface';
 
 
 @Component({
@@ -45,6 +46,8 @@ export class GetBookingListComponent {
     })
   );
 
+  filterSignal = computed(() => this.formReservationRegister().value as BookingFilter);
+
   cityIdSignal = toSignal(
     this.formReservationRegister().get('CityDTO')!.valueChanges.pipe(
       map((city: CityDTO | null) => city?.cityId ?? null)
@@ -54,17 +57,17 @@ export class GetBookingListComponent {
 
   sportIdSignal = toSignal(
     this.formReservationRegister().get('typeSport')!.valueChanges.pipe(
-      map((sport: Sport | null) => sport?.id ?? null)
+      map((sport: Sport | null) => sport?.sportId ?? null)
     ),
     { initialValue: null }
   );
 
-  filterSignal = computed(() => this.formReservationRegister().value as BookingFilter);
-
+  sportAndCitySignal = computed(() => {
+    const sportId = this.sportIdSignal();
+    const cityId = this.cityIdSignal();
+    return sportId != null && cityId != null ? { sportId, cityId } : null;
+  });
   
-  courtOfSport: string[] = ['Pista 1', 'Pista 2', 'Pista 3', 'Pista 4', 'Pista 5'];
-  
-
   citiesResource = rxResource<CityDTO[], void>({
     stream: () => this.bookingService.loadAllCities(),
     defaultValue: [],
@@ -73,49 +76,22 @@ export class GetBookingListComponent {
   sportsResource = rxResource<Sport[], number | null>({
     params: this.cityIdSignal,
     stream: ({ params: cityId }) => {
-      console.log('🏙️ Ciudad seleccionada ID:', cityId);
-      const id = cityId == null ? null : Number(cityId);
-      if (id == null) return of([]);
-      return this.bookingService.loadAllSportsByCity(id).pipe(
-        catchError(err => {
-          console.error('Error cargando deportes:', err);
-          return of([]);
-        })
-      );
+      if (!cityId) return of([]);
+      return this.bookingService.loadAllSportsByCity(cityId);
     },
     defaultValue: [],
   });
 
-  fieldOfSelectedSport = rxResource<Sport | null, number | null>({
-    params: this.sportIdSignal,
-    stream: ({ params: sportId }) => {
-      console.log('🏙️ Ciudad seleccionada ID:', sportId);
-      const id = sportId == null ? null : Number(sportId);
-      if (id == null) return of(null);
-      return this.bookingService.loadAllSportsByCity(this.cityIdSignal()!).pipe(
-        map(sports => sports.find(sport => sport.id === id) || null),
-        catchError(err => {
-          console.error('Error cargando deporte seleccionado:', err);
-          return of(null);
-        })
-      );
-    },
-    defaultValue: null,
-  });
 
-  reservationsResource = rxResource<Reservation[], BookingFilter>({
-    params: this.filterSignal,
+  fieldOfSelectedSport = rxResource<Facility[], { sportId: number; cityId: number } | null>({
+    params: this.sportAndCitySignal,
     stream: ({ params }) => {
-      const filter = params;
-      const noFilter =
-        !filter.date && !filter.CityDTO && !filter.typeSport && !filter.court;
-
-      return noFilter
-        ? this.bookingService.loadAllBookings()
-        : this.bookingService.searchWithFilter(filter);
+      if (!params) return of([]);
+      return this.bookingService.loadAllCourtsBySport(params.cityId, params.sportId);
     },
     defaultValue: [],
   });
+
 
   // 🔹 Efecto para limpiar deporte al cambiar de ciudad
   constructor() {
@@ -137,6 +113,22 @@ export class GetBookingListComponent {
     console.log('🔎 Filtro actual:', this.filterSignal());
     // El recurso `reservationsResource` se actualiza solo con el filtro reactivo,
     // pero este método puede servir si agregas lógica extra.
+  }
+
+
+
+  onSubmit() {
+    const filter: BookingFilter = this.formReservationRegister().value as BookingFilter;
+
+    this.bookingService.searchWithFilter(filter).subscribe({
+      next: (reservations) => {
+        console.log('Reservas filtradas:', reservations);
+        // Aquí ya puedes actualizar señales o estados locales si quieres
+      },
+      error: (err) => {
+        console.error('Error buscando reservas:', err);
+      }
+    });
   }
 
 }

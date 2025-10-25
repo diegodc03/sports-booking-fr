@@ -12,8 +12,8 @@
     <mat-form-field class="w-full">
       <mat-label>Ciudad</mat-label>
       <mat-select formControlName="CityDTO">
-        @for (CityDTO of avaliableCitiesToReserve; track CityDTO.cityId) {
-          <mat-option [value]="CityDTO.cityId">
+        @for (CityDTO of citiesResource.value(); track CityDTO) {
+          <mat-option [value]="CityDTO">
             {{CityDTO.cityName}}
           </mat-option>
         }
@@ -23,8 +23,8 @@
     <mat-form-field class="w-full">
       <mat-label>Deporte</mat-label>
       <mat-select formControlName="typeSport">
-        @for (sport of typeOfSports; track sport.id) {
-          <mat-option [value]="sport.id">
+        @for (sport of sportsResource.value(); track sport) {
+          <mat-option [value]="sport">
             {{sport.sportName}}
           </mat-option>
         }
@@ -34,9 +34,9 @@
     <mat-form-field  class="w-full">
       <mat-label>Pista</mat-label>
       <mat-select formControlName="court">
-        @for (court of courtOfSport; track court) {
+        @for (court of fieldOfSelectedSport.value(); track court) {
           <mat-option [value]="court">
-            {{court}}
+            {{court.facilityName}}
           </mat-option>
         }
       </mat-select>
@@ -67,9 +67,6 @@
       </button>
     </div>
   </form>
-
-
-  
 
   <!--<app-accordion-courts-show [date]="selectedDate()"></app-accordion-courts-show>-->
 </section>

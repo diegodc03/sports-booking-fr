@@ -4,11 +4,12 @@ import { Sport } from '../../interfaces/Sport.interface';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { BookingService } from '../../services/booking.service';
 import { CityDTO } from '../../interfaces/CityDTO.interface';
+import { BookingDateTableComponent } from "../../components/booking-date-table/booking-date-table.component";
 
 
 @Component({
   selector: 'app-booking-page',
-  imports: [GetBookingListComponent],
+  imports: [GetBookingListComponent, BookingDateTableComponent],
   templateUrl: './booking-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

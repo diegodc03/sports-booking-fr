@@ -27,8 +27,8 @@
       <mat-form-field>
         <mat-label>Deporte</mat-label>
         <mat-select formControlName="typeSport">
-          @for (sport of sportsResource.value(); track sport.id) {
-            <mat-option [value]="sport.id">
+          @for (sport of sportsResource.value(); track sport.sportId) {
+            <mat-option [value]="sport">
               {{sport.sportName}}
             </mat-option>
           }
@@ -39,9 +39,9 @@
       <mat-form-field>
         <mat-label>Pista</mat-label>
         <mat-select formControlName="court">
-          @for (court of courtOfSport; track court) {
+          @for (court of fieldOfSelectedSport.value(); track court) {
             <mat-option [value]="court">
-              {{court}}
+              {{court.facilityName}}
             </mat-option>
           }
         </mat-select>
@@ -51,9 +51,9 @@
   
   <section>
     <div class="example-button-row">
-      <button matButton="filled">Buscar</button>
+      <button matButton="filled" (click)="onSubmit()">Buscar</button>
     </div>
-    </section>
+  </section>
   <!--<app-booking-date-table [date]="selectedDate()"/>-->
     
 </section>

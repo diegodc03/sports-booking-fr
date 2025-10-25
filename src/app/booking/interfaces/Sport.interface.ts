@@ -1,5 +1,5 @@
 export interface Sport {
-  id: number;
+  sportId: number;
   sportName: string;
   maxPlayers: number;
 }
