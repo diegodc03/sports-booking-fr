@@ -5,3 +5,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 @import "../node_modules/angular-calendar/css/angular-calendar.css";
 /* angular-cli file: src/styles.css */
 @import "../node_modules/angular-calendar/css/angular-calendar.css";
+
+:root {
+  --daisyui-body-bg: #f3f4f6; /* gris claro suave */
+}
