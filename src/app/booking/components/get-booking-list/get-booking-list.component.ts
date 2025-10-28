@@ -17,12 +17,13 @@ import { BookingFilter } from '../../interfaces/BookingFilter';
 import { catchError, map, of } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Facility } from '../../interfaces/Facility.interface';
+import { ReservationFilter } from "../reservation-filter/reservation-filter";
 
 
 @Component({
   selector: 'app-get-booking-list',
   providers: [provideNativeDateAdapter()],
-  imports: [MatButtonModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, BookingDateTableComponent, ɵInternalFormsSharedModule, ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatInputModule, FormsModule],
+  imports: [MatButtonModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, BookingDateTableComponent, ɵInternalFormsSharedModule, ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatInputModule, FormsModule, ReservationFilter],
   templateUrl: './get-booking-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -2,58 +2,7 @@
 
 <section>  
   <div class="my-4">
-    <form [formGroup]="formReservationRegister()" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <!-- Fecha -->
-      <mat-form-field>
-          <mat-label>Fecha</mat-label>
-          <input matInput [matDatepicker]="datePicker" formControlName="date">
-          <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
-          <mat-datepicker #datePicker></mat-datepicker>
-      </mat-form-field>
-
-      <!-- Ciudad -->
-      <mat-form-field>
-        <mat-label>Zone To Reserve</mat-label>
-        <mat-select formControlName="CityDTO">
-          <mat-option [value]="null">None</mat-option>
-          @for (state of this.citiesResource.value(); track state.cityId) {
-            <mat-option [value]="state">{{ state.cityName }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-
-
-      <!-- Deporte -->
-      <mat-form-field>
-        <mat-label>Deporte</mat-label>
-        <mat-select formControlName="typeSport">
-          @for (sport of sportsResource.value(); track sport.sportId) {
-            <mat-option [value]="sport">
-              {{sport.sportName}}
-            </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-
-      <!-- Pista -->
-      <mat-form-field>
-        <mat-label>Pista</mat-label>
-        <mat-select formControlName="court">
-          @for (court of fieldOfSelectedSport.value(); track court) {
-            <mat-option [value]="court">
-              {{court.facilityName}}
-            </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-    </form>
-  </div>
-  
-  <section>
-    <div class="example-button-row">
-      <button matButton="filled" (click)="onSubmit()">Buscar</button>
-    </div>
-  </section>
+    <app-reservation-filter></app-reservation-filter>
   <!--<app-booking-date-table [date]="selectedDate()"/>-->
-    
+  </div>
 </section>
