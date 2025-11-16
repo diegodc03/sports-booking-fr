@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @plugin "daisyui";
-html, body { height: 100%; }
+html, body { height: 100%; background-color: var(--back-grey);}
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 @import "../node_modules/angular-calendar/css/angular-calendar.css";
 /* angular-cli file: src/styles.css */
@@ -8,4 +8,18 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 :root {
   --daisyui-body-bg: #f3f4f6; /* gris claro suave */
+  --back-grey: #d6d6d6;
+  --back-footer-grey: #b0b1b5;
+  --back-white: #ffffff;
+}
+
+footer {
+  text-align: center;
+  color: var(--color-black);
+  background-color: var(--back-footer-grey);
+}
+
+nav {
+  margin-bottom: calc(var(--spacing) * 4);
+  background-color: var(--back-grey);
 }

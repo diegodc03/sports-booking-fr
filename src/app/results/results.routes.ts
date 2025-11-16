@@ -10,7 +10,7 @@ import { ResultsLayout } from './layout/results-layout/results-layout';
 export const resultsRoutes: Routes = [
   {
     path: '',
-    component: ResultsLayout,
+    component: BookingLayoutComponent,
     children: [
       {
         path: '',

@@ -6,4 +6,5 @@ export interface UserDto {
   email: string;
   password: string;
   telephone: string;
+  confirmPassword: string;
 }

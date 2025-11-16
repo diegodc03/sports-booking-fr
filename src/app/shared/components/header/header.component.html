@@ -1,8 +1,8 @@
 
-  <nav class="flex justify-center px-8 relative h-16 py-4 mb-4">
+  <nav class="flex justify-center px-8 relative h-16 py-4">
 
     <!-- Menú centrado flotante -->
-    <div class="absolute left-1/2 transform -translate-x-1/2 rounded-full shadow-md px-6  flex space-x-2 bg-gray-200">
+    <div class="absolute left-1/2 transform -translate-x-1/2 rounded-full shadow-md px-6  flex space-x-2 bg-[var(--back-white)]">
       <ul class="menu menu-horizontal space-x-3">
         <li>
           <a class="rounded-full hover:bg-base-300 transition">
@@ -35,18 +35,33 @@
 
 
 
-    <div class="absolute right-8   rounded-full shadow-md px-2 flex space-x-2 bg-gray-200">
+    <div class="absolute right-8 rounded-full shadow-md px-2 flex space-x-2 bg-gray-200">
       <ul class="menu menu-horizontal space-x-3">
-        <li>
-          <a class="rounded-full px-4  bg-blue-500 text-white hover:bg-blue-600 transition">
-            Login
-          </a>
-        </li>
-        <li>
-          <a class="rounded-full px-4  bg-green-500 text-white hover:bg-green-600 transition">
-            Register
-          </a>
-        </li>
+        
+        @if (authStatus() === 'not-authenticated' || authStatus() === 'checking') {
+          <li>
+            <a routerLink="/auth/login" class="rounded-full px-4 bg-blue-500 text-white hover:bg-blue-600 transition">
+              Login
+            </a>
+          </li>
+          <li>
+            <a routerLink="/auth/register" class="rounded-full px-4 bg-green-500 text-white hover:bg-green-600 transition">
+              Register
+            </a>
+          </li>
+        }
+        
+        @if (authStatus() === 'authenticated') {
+          <li class="flex items-center">
+            <span class="font-semibold text-slate-800">
+              ¡Hola, {{ user()!.firstname }}!  </span>
+          </li>
+          <li>
+            <a (click)="logout()" class="rounded-full px-4 bg-red-600 text-white hover:bg-red-700 transition cursor-pointer">
+              Logout
+            </a>
+          </li>
+        }
       </ul>
     </div>
   </nav>

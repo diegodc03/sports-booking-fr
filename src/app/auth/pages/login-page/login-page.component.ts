@@ -10,6 +10,7 @@ import { FormUtils } from 'src/app/utils/form-utils';
   selector: 'app-login-page',
   imports: [RouterLink, ReactiveFormsModule],
   templateUrl: './login-page.component.html',
+  styleUrls: ['./login-page.component.css'],
 })
 export class LoginPageComponent {
   fb = inject(FormBuilder);

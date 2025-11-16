@@ -48,12 +48,17 @@ export class AuthService {
       );
   }
 
-  register(user: UserDto): Observable<boolean> {
+  register(user: UserDto): Observable<AuthResponse> { // <-- Devuelve la respuesta real
     return this.http
       .post<AuthResponse>(`${baseUrl}/auth/register`, user)
       .pipe(
-        map((resp) => this.handleAuthSuccess(resp)),
-        catchError((error: any) => this.handleAuthError(error))
+        // 'tap' te permite "espiar" la respuesta exitosa y hacer algo
+        // sin afectar al flujo.
+        tap((resp) => this.handleAuthSuccess(resp))
+        
+        // ¡NO USES CATCHERROR AQUÍ!
+        // Deja que el error fluya al componente,
+        // que es quien debe mostrar el mensaje.
       );
   }
 
@@ -90,6 +95,10 @@ export class AuthService {
     this._token.set(token);
 
     localStorage.setItem('token', token);
+
+    console.log(this._user());
+    console.log(this._token());
+    
 
     return true;
   }

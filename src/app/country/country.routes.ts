@@ -4,6 +4,7 @@ import { CountryLayoutComponent } from "./layouts/countryLayout/countryLayout.co
 import { ByRegionPageComponent } from "./pages/by-region-page/by-region-page.component";
 import { ByCountryPageComponent } from "./pages/by-country-page/by-country-page.component";
 import { CountryPageComponent } from "./pages/country-page/country-page.component";
+import { BookingLayoutComponent } from "../booking/layout/booking-layout/booking-layout.component";
 
 
 
@@ -12,7 +13,7 @@ export const countryRoutes: Routes = [
 
   {
     path: 'country',
-    component: CountryLayoutComponent,
+    component: BookingLayoutComponent,
     children: [
       {
         path: 'by-capital',
