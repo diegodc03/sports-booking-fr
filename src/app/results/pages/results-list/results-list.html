@@ -1,0 +1,60 @@
+<div class="mat-elevation-z8 mt-5">
+
+  @if (reservationsResource.isLoading()) {
+    <div class="loading-shade">Cargando resultados...</div>
+  }
+
+  <table mat-table [dataSource]="dataSource">
+
+    <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef> Acción </th>
+    <td mat-cell *matCellDef="let element">
+        
+        <button mat-icon-button 
+                color="primary" 
+                (click)="openResultDialog(element)">
+        <mat-icon>edit</mat-icon>
+        </button>
+    </td>
+    </ng-container>
+
+    <ng-container matColumnDef="dateTime">
+      <th mat-header-cell *matHeaderCellDef> Fecha y Hora </th>
+      <td mat-cell *matCellDef="let element"> {{element.dateTime}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="facilityName">
+      <th mat-header-cell *matHeaderCellDef> Instalación </th>
+      <td mat-cell *matCellDef="let element"> {{element.facilityName}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="sportName">
+      <th mat-header-cell *matHeaderCellDef> Deporte </th>
+      <td mat-cell *matCellDef="let element"> {{element.sportName}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="cityName">
+      <th mat-header-cell *matHeaderCellDef> Ciudad </th>
+      <td mat-cell *matCellDef="let element"> {{element.cityName}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="result">
+      <th mat-header-cell *matHeaderCellDef> Resultado </th>
+      <td mat-cell *matCellDef="let element"> 
+        {{element.result === 'Pendiente' ? '-' : element.result}} 
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  @if (reservationsResource.error()) {
+    <div class="error-message">Ocurrió un error al cargar los datos.</div>
+  }
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]"
+                 showFirstLastButtons
+                 aria-label="Seleccionar página">
+  </mat-paginator>
+</div>

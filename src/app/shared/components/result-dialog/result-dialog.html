@@ -1,0 +1,80 @@
+<section class="m-5">
+
+    <div mat-dialog-title class="dialog-title">
+    Registrar Resultado: {{ data.reservation.sportName }}
+    </div>
+
+    <mat-dialog-content [formGroup]="resultForm" class="dialog-content">
+
+    <div class="info-box">
+        <p><strong>Instalación:</strong> {{ data.reservation.facilityName }}</p>
+        <p><strong>Fecha:</strong> {{ data.reservation.dateTime }}</p>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <!-- Marcador simple (Fútbol / Baloncesto) -->
+    <ng-container *ngIf="sportType() === 'futbol' || sportType() === 'baloncesto'">
+        <h3 class="section-title">Marcador Final</h3>
+
+        <div class="score-row">
+        <mat-form-field appearance="outline">
+            <mat-label>Equipo A</mat-label>
+            <input matInput type="number" formControlName="scoreA">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Equipo B</mat-label>
+            <input matInput type="number" formControlName="scoreB">
+        </mat-form-field>
+        </div>
+    </ng-container>
+
+    <!-- Sets (Tenis / Pádel) -->
+    <ng-container *ngIf="sportType() === 'tenis' || sportType() === 'padel'">
+
+        <h3 class="section-title">Resultados por Set</h3>
+
+        <div formArrayName="sets">
+
+        <div *ngFor="let setControl of setsArray.controls; let i = index"
+            [formGroupName]="i"
+            class="set-row">
+
+            <div class="set-number">Set {{ i + 1 }}</div>
+
+            <mat-form-field appearance="outline" class="small-field">
+                <mat-label>Juegos A</mat-label>
+                <input matInput type="number" formControlName="gamesA">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="small-field">
+            <mat-label>Juegos B</mat-label>
+            <input matInput type="number" formControlName="gamesB">
+            </mat-form-field>
+
+            <button mat-icon-button color="warn" *ngIf="setsArray.length > 1"
+                    (click)="removeSet(i)">
+            <mat-icon>delete</mat-icon>
+            </button>
+        </div>
+
+        <button mat-stroked-button color="primary" class="add-btn" (click)="addSet()">
+            Añadir Set
+        </button>
+
+        </div>
+
+    </ng-container>
+
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" class="dialog-actions">
+    <button mat-button (click)="onCancel()">Cancelar</button>
+    <button mat-flat-button color="primary"
+            [disabled]="!resultForm.valid"
+            (click)="saveResult()">
+        Guardar Resultado
+    </button>
+    </mat-dialog-actions>
+</section>

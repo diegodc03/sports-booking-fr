@@ -5,20 +5,29 @@ import { BookingPageComponent } from '../booking/pages/booking-page/booking-page
 import { NewReservation } from '../booking/pages/new-reservation/new-reservation';
 import { ResultsMenu } from './components/results-menu/results-menu';
 import { ResultsLayout } from './layout/results-layout/results-layout';
+import { ResultsList } from './pages/results-list/results-list';
 
 
 export const resultsRoutes: Routes = [
   {
     path: '',
-    component: BookingLayoutComponent,
+    component: ResultsLayout,
     children: [
       {
         path: '',
-        component: ResultsMenu,
+        component: ResultsList,
+      },
+      {
+        path: 'results-list',
+        component: ResultsLayout,
+      },
+      {
+        path: 'results-stats',
+        component: ResultsLayout,
       },
       {
         path: '**',
-        redirectTo: 'reservation-list',
+        redirectTo: 'results-list',
       },
     ],
   },
