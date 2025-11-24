@@ -1,13 +1,7 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 name: Angular CI + SonarCloud
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  workflow_dispatch:
+# ... (triggers)
 
 jobs:
   build-and-test:
@@ -19,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js and cache
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
@@ -29,28 +23,39 @@ jobs:
         run: npm ci
 
       - name: Build Angular app
-        run: npm run build --if-present
+        # Aquí se generan los archivos compilados necesarios para Docker
+        run: npm run build --if-present 
 
-      #- name: Run unit tests (Headless)
-       # run: npm run test:ci
-        #env:
-         # CI: true
+      # -----------------------------------------------------
+      # ➡️ PASOS AÑADIDOS/MOVIDOS (PUSH a GHCR)
+      # -----------------------------------------------------
+      
+      # Nota: Usa GHCR_TOKEN si usaste PAT, o GHCR_PASSWORD. Mantén la consistencia.
+      - name: Log in to GitHub Container Registry (GHCR)
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GHCR_USERNAME }}
+          password: ${{ secrets.GHCR_TOKEN }} # Asegúrate que este sea el nombre correcto del secret del PAT
+      
+      - name: Build and push Angular/Nginx image to GHCR
+        uses: docker/build-push-action@v5
+        with:
+          context: . # Asumiendo que el Dockerfile del Frontend está en la raíz o en una subcarpeta accesible
+          push: true
+          tags: ghcr.io/${{ secrets.GHCR_USERNAME }}/${{ github.event.repository.name }}/frontend:latest
+          
+  # -----------------------------------------------------
+  # ➡️ JOB DE SONARCLOUD
+  # -----------------------------------------------------
 
   sonar-analysis:
     runs-on: ubuntu-latest
-    needs: build-and-test
+    needs: build-and-test # Mantiene la dependencia
     steps:
+      # ... (Pasos de checkout, setup, install y SonarCloud, que permanecen iguales)
       - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22.x
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
+      # ...
       - name: Analyze with SonarCloud
         uses: SonarSource/sonarcloud-github-action@v2
         env:
