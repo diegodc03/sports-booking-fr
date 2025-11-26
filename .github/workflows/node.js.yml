@@ -88,8 +88,6 @@ jobs:
       - name: Tailscale Connect
         uses: tailscale/github-action@v2
         with:
-          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }} # Opcional si usas AuthKey
-          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}       # Opcional si usas AuthKey
           authkey: ${{ secrets.TAILSCALE_AUTHKEY }}          # Usamos tu Auth Key
           tags: tag:ci-runner
           version: 1.88.1 # Opcional: fijar versión si quieres estabilidad
