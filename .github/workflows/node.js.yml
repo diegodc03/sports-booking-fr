@@ -122,10 +122,10 @@ jobs:
             docker stop sports-frontend || true
             docker rm sports-frontend || true
 
-            # Arrancar nuevo contenedor en puerto 80
+            # Arrancar nuevo contenedor en puerto 8080
             docker run -d \
-              --name sports-frontend \
-              -p 8080:80 \
+              --name country-app \
+              -p 8080:8080 \
               --restart always \
               $IMAGE_TAG
 
