@@ -88,18 +88,18 @@ jobs:
       - name: Tailscale Connect
         uses: tailscale/github-action@v2
         with:
-          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}          # Usamos tu Auth Key
+          oauth-client-id: ${{ secrets.CLIENT_ID_TAILSCALE }}
+          oauth-secret: ${{ secrets.CLIENT_SECRET_TAILSCALE }}
           tags: tag:ci-runner
-          version: 1.88.1 # Opcional: fijar versión si quieres estabilidad
+          version: 1.88.1
 
       # 2. Conexión SSH y Ejecución de Docker
       - name: Deploy Frontend via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.URL_HOST }}         
-          username: ${{ secrets.SSH_USER }}      # dockeruser
-          key: ${{ secrets.SSH_PRIVATE_KEY }} # Tu Private Key (antes llamada SSH_PRIVATE_KEY)
-          # passphrase: ${{ secrets.SSH_KEY_PASS }} # DESCOMENTAR SOLO SI tu clave privada tiene contraseña
+          username: ${{ secrets.SSH_USER }}      
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           
           script: |
             echo "🔵 [Deploy] Conectado al servidor Debian..."
