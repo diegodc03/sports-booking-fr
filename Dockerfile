@@ -31,7 +31,7 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # 3. Copiamos los archivos estáticos compilados desde la etapa 'build'
 # Ajusta el nombre de la subcarpeta dentro de 'dist' si es necesario
 # Angular CLI moderno suele usar dist/<nombre-proyecto>/
-COPY --from=build /usr/src/app/dist /usr/share/nginx/html
+COPY --from=build /usr/src/app/dist/ /usr/share/nginx/html
 
 # Exponemos el puerto 80 (puerto estándar de Nginx)
 EXPOSE 8080
