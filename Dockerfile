@@ -16,7 +16,7 @@ COPY . .
 
 # Ejecutamos el build de producción de Angular
 # Esto creará la carpeta 'dist' (o 'dist/mi-proyecto-fr')
-RUN npm run build:prod
+RUN npm run build -- --output-path=./dist
 
 # --------------------
 # STAGE 2: RUNTIME (Servidor Nginx)
