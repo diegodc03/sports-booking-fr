@@ -125,7 +125,7 @@ jobs:
             # Arrancar nuevo contenedor en puerto 80
             docker run -d \
               --name sports-frontend \
-              -p 80:80 \
+              -p 8080:80 \
               --restart always \
               $IMAGE_TAG
 
