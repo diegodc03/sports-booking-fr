@@ -16,25 +16,27 @@ COPY . .
 
 # Ejecutamos el build de producción de Angular
 # Esto creará la carpeta 'dist' (o 'dist/mi-proyecto-fr')
-RUN npm run build -- --output-path=./dist
+RUN npm run build --prod
+
+RUN ls -alt
 
 # --------------------
 # STAGE 2: RUNTIME (Servidor Nginx)
 # --------------------
 # Usamos una imagen ligera de Nginx para servir los archivos estáticos
-FROM nginx:alpine AS production-stage
-
-# 2. Copiamos la configuración personalizada de Nginx
-# NECESITAS crear un archivo 'nginx.conf' al lado de este Dockerfile
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+FROM nginx:1.17.1-alpine
 
 # 3. Copiamos los archivos estáticos compilados desde la etapa 'build'
 # Ajusta el nombre de la subcarpeta dentro de 'dist' si es necesario
 # Angular CLI moderno suele usar dist/<nombre-proyecto>/
-COPY --from=build /usr/src/app/dist/ /usr/share/nginx/html
+COPY --from=build /usr/src/app/dist/country-app /usr/share/nginx/html
+
+# 2. Copiamos la configuración personalizada de Nginx
+# NECESITAS crear un archivo 'nginx.conf' al lado de este Dockerfile
+COPY --from=build /usr/src/app/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Exponemos el puerto 80 (puerto estándar de Nginx)
-EXPOSE 8080
+EXPOSE 80
 
 # Comando para iniciar Nginx
 CMD ["nginx", "-g", "daemon off;"]
