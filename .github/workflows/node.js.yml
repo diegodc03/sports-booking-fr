@@ -125,7 +125,7 @@ jobs:
             # Arrancar nuevo contenedor en puerto 8080
             docker run -d \
               --name country-app \
-              -p 8080:8080 \
+              -p 8080:80 \
               --restart always \
               $IMAGE_TAG
 
