@@ -103,30 +103,36 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           
           script: |
-            echo "🔵 [Deploy] Conectado al servidor Debian..."
+            echo "🔵 [Deploy] Conectado al servidor..."
 
-            # Variables para simplificar
+            # 1. Definimos variables (Asegúrate que coinciden con tu repo)
             USERNAME="${{ secrets.GHCR_USERNAME }}"
-            TOKEN="${{ secrets.GHCR_TOKEN }}"
-            REPO_NAME="${{ github.event.repository.name }}"
+            # Convertimos a minúsculas por seguridad
+            REPO_NAME=$(echo "${{ github.event.repository.name }}" | tr '[:upper:]' '[:lower:]')
             IMAGE_TAG="ghcr.io/$USERNAME/$REPO_NAME/frontend:latest"
+            CONTAINER_NAME="country-app"  # <--- IMPORTANTE: Usamos siempre este nombre
 
-            echo "🔵 [Deploy] Haciendo login en GHCR..."
-            echo "$TOKEN" | docker login ghcr.io -u "$USERNAME" --password-stdin
+            echo "🔵 [Deploy] Login en GHCR..."
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "$USERNAME" --password-stdin
 
-            echo "🔵 [Deploy] Descargando imagen: $IMAGE_TAG"
+            echo "🔵 [Deploy] Descargando imagen nueva..."
             docker pull $IMAGE_TAG
 
-            echo "🔵 [Deploy] Reiniciando contenedor..."
-            # Detener y borrar contenedor anterior si existe
-            docker stop sports-frontend || true
-            docker rm sports-frontend || true
+            echo "🔵 [Deploy] Deteniendo contenedor antiguo ($CONTAINER_NAME)..."
+            # Detenemos y borramos usando EL MISMO NOMBRE que tiene tu docker ps
+            docker stop $CONTAINER_NAME || true
+            docker rm $CONTAINER_NAME || true
 
-            # Arrancar nuevo contenedor en puerto 8080
+            echo "🔵 [Deploy] Arrancando nuevo contenedor..."
+            # Aquí corregimos el puerto: 
+            # 8080 (servidor) -> 80 (contenedor nginx)
             docker run -d \
-              --name country-app \
-              -p 80:80 \
+              --name $CONTAINER_NAME \
+              -p 8080:80 \
               --restart always \
               $IMAGE_TAG
+
+            echo "🔵 [Deploy] Limpiando imágenes viejas (Opcional)..."
+            docker image prune -f
 
             echo "✅ [Deploy] Despliegue finalizado exitosamente."
