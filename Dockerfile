@@ -23,20 +23,7 @@ RUN ls -alt
 # --------------------
 # STAGE 2: RUNTIME (Servidor Nginx)
 # --------------------
-# Usamos una imagen ligera de Nginx para servir los archivos estáticos
-FROM nginx:1.17.1-alpine
-
-# 3. Copiamos los archivos estáticos compilados desde la etapa 'build'
-# Ajusta el nombre de la subcarpeta dentro de 'dist' si es necesario
-# Angular CLI moderno suele usar dist/<nombre-proyecto>/
-COPY --from=build /usr/src/app/dist/country-app /usr/share/nginx/html
-
-# 2. Copiamos la configuración personalizada de Nginx
-# NECESITAS crear un archivo 'nginx.conf' al lado de este Dockerfile
-COPY --from=build /usr/src/app/nginx.conf /etc/nginx/conf.d/default.conf
-
-# Exponemos el puerto 80 (puerto estándar de Nginx)
+FROM nginx:1.24-alpine
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /usr/src/app/dist/country-app/browser /usr/share/nginx/html
 EXPOSE 80
-
-# Comando para iniciar Nginx
-CMD ["nginx", "-g", "daemon off;"]
