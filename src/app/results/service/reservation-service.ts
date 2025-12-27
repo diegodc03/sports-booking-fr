@@ -8,7 +8,7 @@ import { ReservationData } from '../interfaces/ReservationResult';
 })
 export class ReservationService {
   
-  private apiUrl = 'http://localhost:8082/api/v1/results';
+  private apiUrl = 'http://localhost:8080/api/v1/results';
 
   http = inject(HttpClient);
 
