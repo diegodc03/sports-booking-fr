@@ -13,7 +13,7 @@ import { CreateReservation } from '../interfaces/CreateResertion';
   providedIn: 'root'
 })
 export class BookingDao {
-  private baseUrl = 'http://localhost:8080/api/v1';
+  private baseUrl = 'http://192.168.1.172:8080/api/v1';
   private http = inject(HttpClient);
 
   // Reservas
