@@ -8,7 +8,7 @@ import { AuthResponse } from '@auth/interfaces/auth-response.interface';
 import { UserDto } from '@auth/interfaces/userDto.interface';
 
 type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
-const baseUrl = "http://localhost:8080/api/v1"; //environment.baseUrl;
+const baseUrl = "http://192.168.1.172:8080/api/v1"; //environment.baseUrl;
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
