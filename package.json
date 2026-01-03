@@ -52,6 +52,7 @@
     "@angular/compiler-cli": "^20.2.0",
     "@types/flatpickr": "^3.0.2",
     "@types/jasmine": "~5.1.0",
+    "baseline-browser-mapping": "^2.9.11",
     "daisyui": "^5.1.12",
     "jasmine-core": "~5.9.0",
     "karma": "~6.4.0",

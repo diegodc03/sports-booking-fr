@@ -8,11 +8,10 @@ import { AuthResponse } from '@auth/interfaces/auth-response.interface';
 import { UserDto } from '@auth/interfaces/userDto.interface';
 
 type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
-const baseUrl = "http://192.168.1.172:8080/api/v1"; //environment.baseUrl;
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-
+  private readonly baseUrl: string = environment.baseUrl;
   private _authStatus = signal<AuthStatus>('checking');
   private _user = signal<UserDto | null>(null);
   private _token = signal<string | null>(localStorage.getItem('token'));
@@ -38,7 +37,7 @@ export class AuthService {
 
   login(email: string, password: string): Observable<boolean> {
     return this.http
-      .post<AuthResponse>(`${baseUrl}/auth/login`, {
+      .post<AuthResponse>(`${this.baseUrl}/auth/login`, {
         email: email,
         password: password,
       })
@@ -50,7 +49,7 @@ export class AuthService {
 
   register(user: UserDto): Observable<AuthResponse> { // <-- Devuelve la respuesta real
     return this.http
-      .post<AuthResponse>(`${baseUrl}/auth/register`, user)
+      .post<AuthResponse>(`${this.baseUrl}/auth/register`, user)
       .pipe(
         // 'tap' te permite "espiar" la respuesta exitosa y hacer algo
         // sin afectar al flujo.
@@ -70,7 +69,7 @@ export class AuthService {
     }
 
     return this.http
-      .get<AuthResponse>(`${baseUrl}/auth/check-status`, {
+      .get<AuthResponse>(`${this.baseUrl}/auth/check-status`, {
         // headers: {
         //   Authorization: `Bearer ${token}`,
         // },

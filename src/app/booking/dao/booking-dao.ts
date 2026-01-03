@@ -7,13 +7,15 @@ import { CityDTO } from '../interfaces/CityDTO.interface';
 import { Sport } from '../interfaces/Sport.interface';
 import { Facility } from '../interfaces/Facility.interface';
 import { CreateReservation } from '../interfaces/CreateResertion';
+import { environment } from 'src/environments/environment';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class BookingDao {
-  private baseUrl = 'http://192.168.1.172:8080/api/v1';
+  private readonly baseUrl: string = environment.baseUrl;
+  
   private http = inject(HttpClient);
 
   // Reservas
