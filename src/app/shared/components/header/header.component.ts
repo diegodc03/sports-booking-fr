@@ -8,6 +8,7 @@ import { AuthService } from '@auth/services/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent {
+
   
   private authService = inject(AuthService);
   router = inject(Router);
@@ -28,6 +29,13 @@ export class HeaderComponent {
     this.router.navigateByUrl("/reservations/add-reservation");
   }
 
+  navigateToResultsList() {
+    this.router.navigateByUrl("/reservations/reservation-list");
+  }
+
+  navigateToStats() {
+    this.router.navigateByUrl("/results/results-list");
+  }
 
 
 }

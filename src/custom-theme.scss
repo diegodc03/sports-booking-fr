@@ -9,8 +9,11 @@
 html {
   @include mat.theme((
     color: (
-      primary: mat.$rose-palette,
-      tertiary: mat.$red-palette,
+      // CHANGE 1: Set Primary to Blue
+      primary: mat.$blue-palette, 
+      
+      // CHANGE 2: Set Tertiary to Violet (or Cyan) to match Blue better than Red
+      tertiary: mat.$violet-palette, 
     ),
     typography: Roboto,
     density: 0,

@@ -26,9 +26,14 @@
           </details>
         </li>
         <li>
-          <a href="results-stats-page" class="rounded-full hover:bg-base-300 transition">
-            Resultados
-          </a>
+          <details class="rounded-full">
+            <summary>Resultados</summary>
+            <ul class="bg-gray-100 rounded-xl shadow-lg mt-2 w-48 p-4">
+              <li><a (click)="navigateToStats()">Estadísticas</a></li>
+              <li><a (click)="navigateToResultsList()">Listado de Resultados</a></li>
+
+            </ul>
+          </details>
         </li>
       </ul>
     </div>

@@ -28,7 +28,7 @@
 
     </label>
     @if ( formUtils.isValidField(loginForm, 'email')) {
-      <span class="form-text text-black">
+      <span class="form-text ">
         {{ formUtils.getFieldError(loginForm, "email") }}
       </span>
     }
@@ -56,7 +56,7 @@
     </label>
 
     @if ( formUtils.isValidField(loginForm, 'password')) {
-      <span class="form-text text-black">
+      <span class="form-text">
         {{ formUtils.getFieldError(loginForm, "password") }}
       </span>
       }
@@ -65,7 +65,7 @@
 
   <button type="submit" class="btn btn-secondary">Login</button>
 
-  <p class="text-slate-700">
+  <p>
     ¿No tienes cuenta?
     <a routerLink="/auth/register" class="text-secondary">Crea una aquí</a>
   </p>
